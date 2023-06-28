@@ -4,15 +4,6 @@ provider "google" {
   region  = "europe-west1"
 }
 
-variable "bucket_name" {
-  description = "Name of the Cloud Storage bucket"
-  default     = "dlp-test"
-}
-
-variable "detection_rule_id" {
-  description = "ID for the custom detection rule"
-}
-
 # Enable the DLP API
 resource "google_project_service" "dlp" {
   service = "dlp.googleapis.com"
