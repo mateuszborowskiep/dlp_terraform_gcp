@@ -16,6 +16,15 @@ resource "google_storage_bucket" "my_bucket" {
   location = "europe-west1"
 }
 
+# Add sample records to bucket
+resource "google_storage_bucket_object" "sample_record" {
+    name = "SampleRecords"
+    bucket = var.bucket_name
+    source = "SampleRecords.csv"
+    content_type = "text/csv"
+    depends_on = [google_storage_bucket.my_bucket]
+}
+
 # Configure the DLP inspect template
 resource "google_data_loss_prevention_inspect_template" "my_inspect_template" {
   parent = "projects/rosy-crawler-389806"

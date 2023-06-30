@@ -1,6 +1,6 @@
 variable "bucket_name" {
   description = "Name of the Cloud Storage bucket"
-  default     = "dlp-test-2"
+  default     = "dlp-test-3"
 }
 
 variable "detection_rule_id" {
