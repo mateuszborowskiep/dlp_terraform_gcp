@@ -18,7 +18,7 @@ resource "google_storage_bucket" "my_bucket" {
 
 # Add sample records to bucket
 resource "google_storage_bucket_object" "sample_record" {
-    name = "SampleRecords"
+    name = "records/SampleRecords"
     bucket = var.bucket_name
     source = "SampleRecords.csv"
     content_type = "text/csv"
@@ -29,6 +29,7 @@ resource "google_storage_bucket_object" "sample_record" {
 resource "google_data_loss_prevention_inspect_template" "my_inspect_template" {
   parent = "projects/rosy-crawler-389806"
   display_name     = "My Inspect Template"
+  depends_on       = [google_project_service.dlp]
   description      = "Template for data inspection"
     inspect_config {
         info_types {
@@ -134,6 +135,7 @@ resource "google_data_loss_prevention_inspect_template" "my_inspect_template" {
 resource "google_data_loss_prevention_job_trigger" "my_job_trigger" {
   parent = "projects/rosy-crawler-389806"
   display_name     = "My Job Trigger"
+  depends_on       = [google_project_service.dlp]
   description      = "Trigger for DLP job"
 
 triggers {
@@ -141,26 +143,18 @@ triggers {
             recurrence_period_duration = "86400s"
         }
     }
-
     inspect_job {
-        inspect_template_name = "fake"
-        actions {
-            save_findings {
-                output_config {
-                    table {
-                        project_id = "project"
-                        dataset_id = "dataset"
-                    }
-                }
-            }
+    inspect_template_name = "sample-inspect-template"
+    actions {
+      job_notification_emails {}
+    }
+    storage_config {
+      cloud_storage_options {
+        file_set {
+          url = "gs://${google_storage_bucket.my_bucket.name}/records/"
         }
-        storage_config {
-            cloud_storage_options {
-                file_set {
-                    url = "gs://${google_storage_bucket.my_bucket.name}/**"
-                }
-            }
-        }
+      }
+    }
     }
 }
 
