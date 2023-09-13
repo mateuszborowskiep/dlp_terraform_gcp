@@ -20,7 +20,7 @@ resource "google_storage_bucket" "my_bucket" {
 resource "google_storage_bucket_object" "sample_record" {
     name = "records/SampleRecords"
     bucket = var.bucket_name
-    source = "SampleRecords.csv"
+    source = "sample-data.csv"
     content_type = "text/csv"
     depends_on = [google_storage_bucket.my_bucket]
 }
@@ -80,35 +80,6 @@ resource "google_data_loss_prevention_inspect_template" "my_inspect_template" {
             }
             info_types {
                 name = "FIRST_NAME"
-            }
-            rules {
-                exclusion_rule {
-                    dictionary {
-                        word_list {
-                            words = ["TEST"]
-                        }
-                    }
-                    matching_type = "MATCHING_TYPE_PARTIAL_MATCH"
-                }
-            }
-        }
-
-        rule_set {
-            info_types {
-                name = "PERSON_NAME"
-            }
-            rules {
-                hotword_rule {
-                    hotword_regex {
-                        pattern = "patient"
-                    }
-                    proximity {
-                        window_before = 50
-                    }
-                    likelihood_adjustment {
-                        fixed_likelihood = "VERY_LIKELY"
-                    }
-                }
             }
         }
 
